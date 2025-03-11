@@ -77,12 +77,12 @@ const Bottom = () => {
                     <span className="text-center" style={{ fontSize: '9px' }}>Home</span>
                   </Stack>
                 </a>
-                <Link  className="text-decoration-none mx-2" onClick={() => { setToastType('inspect-menu'); handleShowAndCloseToast();}}>
-                  <Stack direction="vertical" className="justify-content-center align-items-center text-center">
-                    <ImSearch size={25} />
-                    <span className="" style={{ fontSize: '9px' }}>Inspecting</span>
+                <a href="/laporan-stock-greige" className="text-decoration-none mx-2">
+                  <Stack direction="vertical" className="justify-content-center align-items-center">
+                    <RxIdCard size={25} />
+                    <span className="text-center" style={{ fontSize: '9px' }}>Rekap Laporan Stock</span>
                   </Stack>
-                </Link>
+                </a>
                 <Link  className="text-decoration-none mx-2" onClick={() => { setToastType('setting-menu'); handleShowAndCloseToast();}}>
                   <Stack direction="vertical" className="justify-content-center align-items-center text-center">
                     <FaGear size={25} />
@@ -103,7 +103,7 @@ const Bottom = () => {
           >
             <Toast.Body>
               <Stack direction="vertical" className="justify-content-center align-items-center">
-                {toastType === 'inspect-menu' && (
+                {/* {toastType === 'inspect-menu' && (
                   <>
                     <a href="/inspecting-create-dyeing" className="text-decoration-none p-2 w-100" onClick={(e) => { e.preventDefault(); window.location.href = '/inspecting-create-dyeing'; }}>
                       <Stack direction="horizontal" gap={3} className="justify-content-center align-items-center">
@@ -124,7 +124,7 @@ const Bottom = () => {
                       </Stack>
                     </a>
                   </>
-                )}
+                )} */}
                 {toastType === 'setting-menu' && (
                     <a href="#" className="text-decoration-none p-2 w-100" onClick={(e) => { e.preventDefault(); setShowConfirmModal(true); }}>
                     <Stack direction="horizontal" gap={3} className="justify-content-center align-items-center">

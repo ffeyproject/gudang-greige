@@ -13,7 +13,7 @@ import ErrorPage from '../ErrorPage';
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const Dashboard = () => {
-  document.title = 'Vinspect GAP';
+  document.title = 'Gudang Greige | Dashboard';
   const [data, setData] = useState({});
   const [inspectRecent, setInspectRecent] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -138,69 +138,7 @@ const Dashboard = () => {
                       </Badge>
                     </p>
                   </div>
-                  <div className="py-3">
-                    <h6>Inspect Terakhir:</h6>
-                    <Stack direction="horizontal" gap={3} style={{ overflow: "auto", paddingBlock: "5px" }}>
-                      {inspectRecent.map((inspect, index) => (
-                        <Link
-                          key={index}
-                          to={
-                            inspect.jenis_process === 1
-                              ? `/inspecting-dyeing/${inspect.id}`
-                              : `/inspecting-printing/${inspect.id}`
-                          }
-                          className="text-decoration-none"
-                        >
-                          <Badge bg="white" className="text-burgundy p-2">
-                            {inspect.jenis_process === 1
-                              ? inspect.kartu_process_dyeing?.no
-                              : inspect.kartu_process_printing?.no}
-                          </Badge>
-                        </Link>
-                      ))}
-                    </Stack>
-                  </div>
                 </Stack>
-                <Card className="p-4" style={{ marginBottom: "8rem" , minHeight: "50vh"}}>
-                  <Row className="g-3">
-                    <Col sm={4} md={4}>
-                      <Link to="/inspecting-create-dyeing" className="text-decoration-none">
-                        <Card className="shadow-sm bg-burgundy hover-burgundy text-white border-none p-2 h-100">
-                          <Card.Body className="d-flex flex-column">
-                            <GiMagnifyingGlass size={50} />
-                            <Card.Title>Inspect Dyeing</Card.Title>
-                          </Card.Body>
-                        </Card>
-                      </Link>
-                    </Col>
-                    <Col sm={4} md={4}>
-                      <Link to="/inspecting-create-printing" className="text-decoration-none">
-                        <Card className="shadow-sm bg-young-burgundy text-white border-none p-2 h-100">
-                          <Card.Body className="d-flex flex-column">
-                            <GiMagnifyingGlass size={50} />
-                            <Card.Title>Inspect Printing</Card.Title>
-                          </Card.Body>
-                        </Card>
-                      </Link>
-                    </Col>
-                    <Col sm={4} md={4}>
-                      <Link to="/inspecting-create-mkl-bj" className="text-decoration-none">
-                        <Card className="shadow-sm bg-warning text-burgundy border-none p-2 h-100">
-                          <Card.Body className="d-flex flex-column">
-                            <GiMagnifyingGlass size={50} />
-                            <Card.Title>Inspect MKL/BJ</Card.Title>
-                          </Card.Body>
-                        </Card>
-                      </Link>
-                    </Col>
-                  </Row>
-                  <hr />
-                  <h5>
-                    Statistik Hasil Inspect Saya 
-                    </h5>
-                  <div><Button variant='burgundy' size='sm' onClick={() => fetchDataGrafik()} disabled={isSearchForGrafik} >{isSearchForGrafik ? <Spinner animation="border" size="sm" /> : "Tampilkan Grafik" }</Button></div>
-                  <Bar data={dataChart} options={options} /> 
-                </Card>
               </Container>
             </div>
           </div>

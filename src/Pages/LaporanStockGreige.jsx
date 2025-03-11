@@ -13,6 +13,7 @@ const LaporanStockGreige = () => {
     const [note, setNote] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const printRef = useRef();
+    const [isNotPrinting, setIsNotPrinting] = useState(true);
 
     const kondisiGreige = {
         1: "Salur Muda",
@@ -24,7 +25,7 @@ const LaporanStockGreige = () => {
     }
 
     const asalGreige = {
-        1: "Water Jet loom",
+        1: "WJL",
         2: "Beli",
         3: "Rapier",
         4: "Beli Import",
@@ -44,7 +45,9 @@ const LaporanStockGreige = () => {
         setSearchingProcess(true); 
         axiosInstance.get(`greige/rekap-stock-greige`, { params: combineParams })
             .then(response => {
-                setData(response.data.data);
+                setData(
+                    response.data.data.sort((a, b) => (a.greige_id > b.greige_id) ? 1 : -1)
+                );
                 console.log(response.data.data);
 
             })
@@ -76,9 +79,13 @@ const LaporanStockGreige = () => {
     }, [type]);
 
     const handlePrint = () => {
-        const printContent = printRef.current.innerHTML;
-        document.body.innerHTML = printContent;
-        window.print();
+        setIsNotPrinting(false);
+        setTimeout(() => {
+            const printContent = printRef.current.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            setIsNotPrinting(true);
+          }, 100);
     };
 
     return (
@@ -163,7 +170,7 @@ const LaporanStockGreige = () => {
                                 {data?.length !== 0 && <p>Ditemukan {data?.length || 0} data</p>}
                             </div>
                             <div className='float-end px-2'>
-                                <Button variant="warning" onClick={handlePrint} className="mt-3 text-white">
+                                <Button as="a" target="_blank" href={`/laporan-stock-greige/print?${data.length > 0 ? Object.entries(params).filter(([key, value]) => value !== undefined).concat([["start_date", startDate], ["end_date", endDate]]).map(([key, value]) => `${key}=${value}`).join("&") : ""}`} variant="warning" className="mt-3 text-white">
                                     <FiPrinter />
                                 </Button>
                             </div>
@@ -171,7 +178,7 @@ const LaporanStockGreige = () => {
                             <div ref={printRef} className='p-3 border mt-2'>
                                 <>
                                 <h4 className='text-center py-4'>REKAP LAPORAN STOCK GREIGE <p className='h6'>PT. GAJAH ANGKASA PERKASA</p></h4>
-                                <Table bordered responsive style={{ borderColor: "black", fontSize: "11px"}}>
+                                <Table bordered responsive={isNotPrinting} style={{ borderColor: "black", fontSize: "11px"}}>
                                     <tbody className='text-center'>
                                         <tr>
                                             <th rowSpan={2}>Motif</th>

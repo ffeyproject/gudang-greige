@@ -62,18 +62,18 @@ const Login = () => {
     isLoading ? (
       <LoadingSpinner />
     ) : (
-      <Container fluid className="vh-100 d-flex align-items-center justify-content-center bg-burgundy-gradient bg-pattern-container">
+      <Container fluid className="vh-100 d-flex align-items-center justify-content-center">
         <Row className="w-100 px-2">
           <Col xs={12} sm={10} md={8} lg={6} xl={3} className="mx-auto">
             <>
               <div
-                className="text-light py-4"
+                className="py-4 text-burgundy"
                 style={{ fontWeight: '200', fontSize: '2rem' }}
               >
-                Vinspect <b>GAP</b>
+                Gudang <b>Greige</b>
               </div>
               <Card className="pb-2 border-white">
-                <Card className="px-2 py-4 shadow border-white">
+                <Card className="px-2 py-4 shadow border-white bg-burgundy-gradient text-white">
                   <Card.Body>
                     <Card.Title className="text-left mb-4 text-2xl">
                       Please Login First!
@@ -87,7 +87,7 @@ const Login = () => {
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           required
-                          className="bg-transparent border-burgundy"
+                          className=" border-burgundy text-burgundy border-none"
                         />
                       </Form.Group>
                       <Form.Group className="mb-3" controlId="password">
@@ -97,7 +97,7 @@ const Login = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
-                          className="bg-transparent border-burgundy"
+                          className=" border-burgundy text-burgundy border-none"
                         />
                       </Form.Group>
                       <Form.Group className="mb-3" controlId="remember">
@@ -111,14 +111,14 @@ const Login = () => {
                         />
                       </Form.Group>
                       <div className="d-grid">
-                        <Button type="submit" variant="burgundy">
+                        <Button type="submit" variant={'warning'} >
                           Login
                         </Button>
                       </div>
                     </Form>
                     <p className="text-center mt-3">
                       <small>
-                        Don't have an account? <a href="/register">Register here</a>
+                        Belum memiliki akun?, mohon hubungi <b>Kepala Bagian</b>.
                       </small>
                     </p>
                   </Card.Body>
