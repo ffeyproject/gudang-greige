@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Table, Button, Form, Spinner, Modal } from '
 import axiosInstance from '../axiosConfig';
 import moment from 'moment';
 import { FiPrinter } from "react-icons/fi";
+import Bottom from './Layouts/Bottom/Bottom';
 
 const LaporanStockGreige = () => {
     const [data, setData] = useState([]);
@@ -90,7 +91,7 @@ const LaporanStockGreige = () => {
 
     return (
         <>
-        <Container fluid className="mt-3" style={{ fontSize: '12px', width: '95%' }}>
+        <Container fluid className="mt-3" style={{ fontSize: '12px', width: '95%', marginBottom: '14rem' }}>
             <Row>
                 <Col>
                     <Card>
@@ -247,6 +248,18 @@ const LaporanStockGreige = () => {
                                     })}
 
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colSpan={7} className='fw-bold'>TOTAL</td>
+                                            <td className='fw-bold'style={{fontSize: "13px"}}>{data.reduce((total, d) => total + d.total_panjang, 0).toLocaleString('id-ID')}</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
                                 </Table>
                                 </>
                             </div>
@@ -256,6 +269,7 @@ const LaporanStockGreige = () => {
                 </Col>
             </Row>
         </Container>
+        <Bottom />
         <Modal
             show={showModal}
             onHide={() => setShowModal(false)}
