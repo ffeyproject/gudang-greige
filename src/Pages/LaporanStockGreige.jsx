@@ -281,7 +281,7 @@ const LaporanStockGreige = () => {
                                                                 .reduce((total, d) => total + d.total_panjang, 0)
                                                                 .toLocaleString('id-ID')}
                                                         </td>
-                                                        <td rowSpan={rowSpan} className='fw-bold py-0'>{item.available}</td>
+                                                        <td rowSpan={rowSpan} className='fw-bold py-0'>{new Intl.NumberFormat('id-ID', { maximumSignificantDigits: 3 }).format(item.available)}</td>
                                                     </React.Fragment>
                                                 )}
                                                 {[1, 2, 3, 4, 5].map((i) => (
