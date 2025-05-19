@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Card, Table, Button, Form, Spinner, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Button, Form, Spinner, Modal, Stack } from 'react-bootstrap';
 import axiosInstance from '../axiosConfig';
 import moment from 'moment';
 import { FiPrinter } from "react-icons/fi";
+import { RiFileExcel2Fill } from "react-icons/ri";
 import Bottom from './Layouts/Bottom/Bottom';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 const LaporanStockGreige = () => {
     const [data, setData] = useState([]);
@@ -14,7 +17,6 @@ const LaporanStockGreige = () => {
     const [note, setNote] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const printRef = useRef();
-    const [isNotPrinting, setIsNotPrinting] = useState(true);
 
     const kondisiGreige = {
         1: "Salur Muda",
@@ -54,7 +56,7 @@ const LaporanStockGreige = () => {
             })
             .catch(error => {
                 console.error(error);
-                console.log("payload", combineParams);
+                // console.log("payload", combineParams);
             })
             .finally(() => {
                 setSearchingProcess(false);
@@ -79,14 +81,48 @@ const LaporanStockGreige = () => {
         };
     }, [type]);
 
-    const handlePrint = () => {
-        setIsNotPrinting(false);
-        setTimeout(() => {
-            const printContent = printRef.current.innerHTML;
-            document.body.innerHTML = printContent;
-            window.print();
-            setIsNotPrinting(true);
-          }, 100);
+
+    // Fungsi untuk convert data ke Excel
+    const handleExportToExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Laporan Stock Greige');
+
+        // Tambahkan header
+        worksheet.addRow([
+            'Motif', 'Lot Lusi', 'Lot Pakan', 'Keterangan', 
+            'Kondisi Greige', 'Asal Greige', 'Lebar Kain', 
+            'Jumlah Stock', 'A', 'B', 'C', 'D', 'X', 'Total'
+        ]);
+
+        // Tambahkan data
+        data.forEach(item => {
+            worksheet.addRow([
+                item.nama_kain,
+                item.lot_lusi,
+                item.lot_pakan,
+                item.note || '-',
+                kondisiGreige[item.status_tsd],
+                asalGreige[item.asal_greige],
+                item.lebar_kain,
+                data.filter(d => d.greige_id === item.greige_id)
+                    .reduce((total, d) => total + d.total_panjang, 0),
+                item.grade[1] || 0,
+                item.grade[2] || 0,
+                item.grade[3] || 0,
+                item.grade[4] || 0,
+                item.grade[5] || 0,
+                item.total_panjang
+            ]);
+        });
+
+        // Atur auto width
+        worksheet.columns.forEach(column => {
+            column.width = 15;
+        });
+
+        // Simpan file
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), 'Laporan_Stock_Greige.xlsx');
     };
 
     return (
@@ -170,16 +206,21 @@ const LaporanStockGreige = () => {
                             <div className='py-2'>
                                 {data?.length !== 0 && <p>Ditemukan {data?.length || 0} data</p>}
                             </div>
-                            <div className='float-end px-2'>
-                                <Button as="a" target="_blank" href={`/laporan-stock-greige/print?${data.length > 0 ? Object.entries(params).filter(([key, value]) => value !== undefined).concat([["start_date", startDate], ["end_date", endDate]]).map(([key, value]) => `${key}=${value}`).join("&") : ""}`} variant="warning" className="mt-3 text-white">
-                                    <FiPrinter />
-                                </Button>
+                            <div className='px-2 position-absolute' style={{ right: 15 }}>
+                                <Stack direction='horizontal' gap={2}>
+                                    <Button as="a" target="_blank" href={`/laporan-stock-greige/print?${data.length > 0 ? Object.entries(params).filter(([key, value]) => value !== undefined).concat([["start_date", startDate], ["end_date", endDate]]).map(([key, value]) => `${key}=${value}`).join("&") : ""}`} variant="warning" className="mt-3 text-white">
+                                        <FiPrinter />
+                                    </Button>
+                                    <Button variant="success" className="mt-3 text-white" onClick={handleExportToExcel}>
+                                        <RiFileExcel2Fill/>
+                                    </Button>
+                                </Stack>
                             </div>
 
                             <div ref={printRef} className='p-3 border mt-2'>
                                 <>
                                 <h4 className='text-center py-4'>REKAP LAPORAN STOCK GREIGE <p className='h6'>PT. GAJAH ANGKASA PERKASA</p></h4>
-                                <Table bordered responsive={isNotPrinting} style={{ borderColor: "black", fontSize: "11px"}}>
+                                <Table bordered responsive={true} hover style={{ borderColor: "black", fontSize: "11px"}}>
                                     <tbody className='text-center'>
                                         <tr>
                                             <th rowSpan={2}>Motif</th>
@@ -189,6 +230,7 @@ const LaporanStockGreige = () => {
                                             <th rowSpan={2}>Asal Greige</th>
                                             <th rowSpan={2}>lebar Kain</th>
                                             <th rowSpan={2}>Jumlah Stock</th>
+                                            <th rowSpan={2}>Available</th> 
                                             <th colSpan={6}>Saldo Akhir</th>
 
                                         </tr>
@@ -233,16 +275,19 @@ const LaporanStockGreige = () => {
                                                 <td className='py-0'>{asalGreige[item.asal_greige]}</td>
                                                 <td className='py-0'>{item.lebar_kain}</td>
                                                 {rowSpan > 0 && (
-                                                    <td rowSpan={rowSpan} className='fw-bold py-0' style={{fontSize: "13px"}}>
-                                                        {data.filter(d => d.greige_id === item.greige_id)
-                                                            .reduce((total, d) => total + d.total_panjang, 0)
-                                                            .toLocaleString('id-ID')}
-                                                    </td>
+                                                    <React.Fragment>
+                                                        <td rowSpan={rowSpan} className='fw-bold py-0' style={{fontSize: "13px"}}>
+                                                            {data.filter(d => d.greige_id === item.greige_id)
+                                                                .reduce((total, d) => total + d.total_panjang, 0)
+                                                                .toLocaleString('id-ID')}
+                                                        </td>
+                                                        <td rowSpan={rowSpan} className='fw-bold py-0'>{item.available}</td>
+                                                    </React.Fragment>
                                                 )}
                                                 {[1, 2, 3, 4, 5].map((i) => (
                                                     <td key={i}>{item.grade[i] ? item.grade[i].toLocaleString('id-ID') : 0}</td>
                                                 ))}
-                                                <td className='py-0'>{item.total_panjang}</td>
+                                                <td className='py-0'>{item.total_panjang}</td>  
                                             </tr>
                                         );
                                     })}

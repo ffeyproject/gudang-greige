@@ -68,7 +68,7 @@ const LaporanStockGreige = () => {
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const paramObj = Object.fromEntries(urlParams.entries());
-        console.log(paramObj);
+        // console.log(paramObj);
 
         setSearchingProcess(true);
         axiosInstance.get('greige/rekap-stock-greige', { params: paramObj })
@@ -76,11 +76,11 @@ const LaporanStockGreige = () => {
                 setData(
                     response.data.data.sort((a, b) => (a.greige_id > b.greige_id) ? 1 : -1)
                 );
-                console.log('RESPON',response.data.data);
+                // console.log('RESPON',response.data.data);
             })
             .catch(error => {
                 console.error(error);
-                console.log('payload', paramObj);
+                // console.log('payload', paramObj);
             })
             .finally(() => {
                 setSearchingProcess(false);
