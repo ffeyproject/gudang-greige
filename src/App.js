@@ -6,6 +6,8 @@ import Dashboard from './Pages/Dashboard';
 import ErrorPage from './ErrorPage';
 import LaporanStockGreige from './Pages/LaporanStockGreige';
 import LaporanStockGreigePrint from './Pages/Print/LaporanStockGreigePrint';
+import LaporanStockOpname from './Pages/LaporanStockOpname';
+import LaporanStockOpnamePrint from './Pages/Print/LaporanStockOpnamePrint';
 
 
 const App = () => {
@@ -18,6 +20,8 @@ const App = () => {
 
           <Route path="/laporan-stock-greige" element={<Middleware><LaporanStockGreige/></Middleware>} />
           <Route path="/laporan-stock-greige/print" element={<Middleware><LaporanStockGreigePrint/></Middleware>} />
+          <Route path="/laporan-stock-opname" element={<Middleware><LaporanStockOpname/></Middleware>} />
+          <Route path="/laporan-stock-opname/print" element={<Middleware><LaporanStockOpnamePrint/></Middleware>} />
 
       </Routes>
     </Router>
