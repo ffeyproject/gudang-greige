@@ -89,6 +89,12 @@ const Bottom = () => {
                     <span className="text-center" style={{ fontSize: '9px' }}>Rekap Laporan Stock Opname</span>
                   </Stack>
                 </a>
+                <a href="/laporan-stock-greige-motif" className="text-decoration-none mx-2">
+                  <Stack direction="vertical" className="justify-content-center align-items-center">
+                    <RxIdCard size={25} />
+                    <span className="text-center" style={{ fontSize: '9px' }}>Rekap Laporan Stock Greige Per Motif</span>
+                  </Stack>
+                </a>
                 <Link  className="text-decoration-none mx-2" onClick={() => { setToastType('setting-menu'); handleShowAndCloseToast();}}>
                   <Stack direction="vertical" className="justify-content-center align-items-center text-center">
                     <FaGear size={25} />
