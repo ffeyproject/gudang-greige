@@ -235,7 +235,7 @@ const LaporanStockGreige = () => {
                                     <thead className='text-center bg-light'>
                                         <tr>
                                             <th rowSpan={2} className="align-middle">Motif</th>
-                                            <th rowSpan={2} className="align-middle">Keterangan</th>
+                                            {/* <th rowSpan={2} className="align-middle">Keterangan</th> */}
                                             <th rowSpan={2} className="align-middle">Kondisi Greige</th>
                                             <th rowSpan={2} className="align-middle">Asal Greige</th>
                                             <th rowSpan={2} className="align-middle">Lebar Kain</th>
@@ -256,7 +256,7 @@ const LaporanStockGreige = () => {
                                     {data.map((item, index) => (
                                         <tr key={index} className="text-center">
                                             <td className='py-1 align-middle'>{item.nama_kain}</td>
-                                            <td className='py-1 align-middle'>
+                                            {/* <td className='py-1 align-middle'>
                                                 {item.note ? (
                                                     <span
                                                         className='text-dark text-decoration-none'
@@ -269,7 +269,7 @@ const LaporanStockGreige = () => {
                                                         {item.note}
                                                     </span>
                                                 ) : '-'}
-                                            </td>
+                                            </td> */}
                                             <td className='py-1 align-middle'>{kondisiGreige[item.status_tsd]}</td>
                                             <td className='py-1 align-middle'>{asalGreige[item.asal_greige]}</td>
                                             <td className='py-1 align-middle'>{item.lebar_kain || '-'}</td>
@@ -290,7 +290,7 @@ const LaporanStockGreige = () => {
                                     </tbody>
                                     <tfoot>
                                         <tr className="text-center fw-bold bg-light">
-                                            <td colSpan={5}>GRAND TOTAL</td>
+                                            <td colSpan={4}>GRAND TOTAL</td>
                                             <td>{data.reduce((total, d) => total + d.total_panjang, 0).toLocaleString('id-ID')}</td>
                                             <td>{data.reduce((total, d) => total + Number(d.available || 0), 0).toLocaleString('id-ID')}</td>
                                             {[1, 2, 3, 4, 5].map((i) => (
