@@ -7,7 +7,7 @@ import axiosInstance from '../../../axiosConfig';
 import ConfirmModal from '../../../Components/ConfirmModal';
 import { Link } from 'react-router-dom';
 import { GiMagnifyingGlass } from "react-icons/gi";
-import { FaGear } from "react-icons/fa6";
+import { FaGear, FaBoxesStacked } from "react-icons/fa6";
 import { ImSearch } from "react-icons/im";
 
 
@@ -93,6 +93,12 @@ const Bottom = () => {
                   <Stack direction="vertical" className="justify-content-center align-items-center">
                     <RxIdCard size={25} />
                     <span className="text-center" style={{ fontSize: '9px' }}>Rekap Laporan Stock Greige Per Motif</span>
+                  </Stack>
+                </a>
+                <a href="/stock-greige-daily" className="text-decoration-none mx-2">
+                  <Stack direction="vertical" className="justify-content-center align-items-center">
+                    <FaBoxesStacked size={25} />
+                    <span className="text-center" style={{ fontSize: '9px' }}>Stok Harian & Matriks</span>
                   </Stack>
                 </a>
                 <Link  className="text-decoration-none mx-2" onClick={() => { setToastType('setting-menu'); handleShowAndCloseToast();}}>

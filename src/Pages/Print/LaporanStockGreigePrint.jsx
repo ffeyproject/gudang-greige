@@ -37,6 +37,21 @@ const LaporanStockGreige = () => {
         9: "Makloon",
     }
 
+    const renderSettingText = (items) => {
+        if (!items || items.length === 0) return null;
+        const totalGap = items.reduce((total, d) => total + (Number(d.total_setting_gap) || 0), 0);
+        const totalLuar = items.reduce((total, d) => total + (Number(d.total_setting_luar) || 0), 0);
+        const totalLain = items.reduce((total, d) => total + (Number(d.total_setting_lain) || 0), 0);
+
+        const parts = [];
+        if (totalGap > 0) parts.push(`Setting di Gap : ${totalGap.toLocaleString('id-ID')}`);
+        if (totalLuar > 0) parts.push(`Setting di Luar : ${totalLuar.toLocaleString('id-ID')}`);
+        if (totalLain > 0) parts.push(`Setting : ${totalLain.toLocaleString('id-ID')}`);
+
+        if (parts.length === 0) return null;
+        return `( ${parts.join(' | ')} )`;
+    };
+
     const type = "portrait";
     useEffect(() => {
         const style = document.createElement("style");
@@ -153,10 +168,17 @@ const LaporanStockGreige = () => {
                                                 <td className='py-0'>{asalGreige[item.asal_greige]}</td>
                                                 <td className='py-0'>{item.lebar_kain}</td>
                                                 {rowSpan > 0 && (
-                                                    <td rowSpan={rowSpan} className='fw-bold py-0' style={{fontSize: "13px"}}>
-                                                        {data.filter(d => d.greige_id === item.greige_id)
-                                                            .reduce((total, d) => total + d.total_panjang, 0)
-                                                            .toLocaleString('id-ID')}
+                                                    <td rowSpan={rowSpan} className='fw-bold py-0 text-center' style={{fontSize: "13px"}}>
+                                                        <div>
+                                                            {data.filter(d => d.greige_id === item.greige_id)
+                                                                .reduce((total, d) => total + (d.total_panjang || 0), 0)
+                                                                .toLocaleString('id-ID')}
+                                                        </div>
+                                                        {renderSettingText(data.filter(d => d.greige_id === item.greige_id)) && (
+                                                            <div className='fw-normal text-muted' style={{fontSize: "10px", lineHeight: "1.2"}}>
+                                                                {renderSettingText(data.filter(d => d.greige_id === item.greige_id))}
+                                                            </div>
+                                                        )}
                                                     </td>
                                                 )}
                                                 {[1, 2, 3, 4, 5].map((i) => (

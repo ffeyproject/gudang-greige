@@ -5,6 +5,8 @@ import Bottom from './Layouts/Bottom/Bottom';
 import LoadingSpinner from '../Components/LoadingSpinner';
 import { GiMagnifyingGlass } from "react-icons/gi";
 import { Link } from 'react-router-dom';
+import { RxIdCard } from "react-icons/rx";
+import { FaBoxesStacked } from "react-icons/fa6";
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import ErrorPage from '../ErrorPage';
@@ -101,10 +103,11 @@ const Dashboard = () => {
         <ErrorPage status={isError}/>
       ) : (
         <>
-          <div style={{ position: "relative", height: "30rem" }}>
+          <div style={{ position: "relative", minHeight: "40rem", paddingBottom: "10rem" }}>
             <div
               style={{
                 height: "100%",
+                minHeight: "40rem",
                 justifyContent: "center",
                 paddingBottom: "100px",
               }}
@@ -138,6 +141,81 @@ const Dashboard = () => {
                       </Badge>
                     </p>
                   </div>
+
+                  {/* Menu Shortcuts */}
+                  <Row className="mt-3 g-3">
+                    <Col xs={12} sm={6} md={3}>
+                      <Card
+                        as={Link}
+                        to="/stock-greige-daily"
+                        className="text-decoration-none shadow border-0 p-3 bg-white text-dark h-100 rounded-3 transition-card"
+                      >
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <div className="bg-burgundy text-white p-2 rounded-2">
+                            <FaBoxesStacked size={20} />
+                          </div>
+                          <Badge bg="danger" className="text-uppercase" style={{ fontSize: '9px' }}>
+                            Baru
+                          </Badge>
+                        </div>
+                        <h6 className="fw-bold mb-1 text-dark">Stok Greige Harian & Matriks</h6>
+                        <small className="text-muted" style={{ fontSize: '11px' }}>
+                          Tracking stok harian, komparasi selisih & matriks pergerakan antar hari.
+                        </small>
+                      </Card>
+                    </Col>
+                    <Col xs={12} sm={6} md={3}>
+                      <Card
+                        as={Link}
+                        to="/laporan-stock-greige"
+                        className="text-decoration-none shadow border-0 p-3 bg-white text-dark h-100 rounded-3 transition-card"
+                      >
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <div className="bg-burgundy text-white p-2 rounded-2">
+                            <RxIdCard size={20} />
+                          </div>
+                        </div>
+                        <h6 className="fw-bold mb-1 text-dark">Rekap Laporan Stock</h6>
+                        <small className="text-muted" style={{ fontSize: '11px' }}>
+                          Rekapitulasi stok greige berdasarkan tanggal dan filter kondisi.
+                        </small>
+                      </Card>
+                    </Col>
+                    <Col xs={12} sm={6} md={3}>
+                      <Card
+                        as={Link}
+                        to="/laporan-stock-greige-motif"
+                        className="text-decoration-none shadow border-0 p-3 bg-white text-dark h-100 rounded-3 transition-card"
+                      >
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <div className="bg-burgundy text-white p-2 rounded-2">
+                            <RxIdCard size={20} />
+                          </div>
+                        </div>
+                        <h6 className="fw-bold mb-1 text-dark">Stok Per Motif</h6>
+                        <small className="text-muted" style={{ fontSize: '11px' }}>
+                          Rekapan akumulasi total stok greige per motif kain.
+                        </small>
+                      </Card>
+                    </Col>
+                    <Col xs={12} sm={6} md={3}>
+                      <Card
+                        as={Link}
+                        to="/laporan-stock-opname"
+                        className="text-decoration-none shadow border-0 p-3 bg-white text-dark h-100 rounded-3 transition-card"
+                      >
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <div className="bg-burgundy text-white p-2 rounded-2">
+                            <RxIdCard size={20} />
+                          </div>
+                        </div>
+                        <h6 className="fw-bold mb-1 text-dark">Stock Opname</h6>
+                        <small className="text-muted" style={{ fontSize: '11px' }}>
+                          Laporan data hasil stock opname fisik greige gudang.
+                        </small>
+                      </Card>
+                    </Col>
+                  </Row>
                 </Stack>
               </Container>
             </div>

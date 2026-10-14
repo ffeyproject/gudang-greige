@@ -39,7 +39,20 @@ const LaporanStockGreige = () => {
         9: "Makloon",
     }
 
-    
+    const renderSettingText = (items) => {
+        if (!items || items.length === 0) return null;
+        const totalGap = items.reduce((total, d) => total + (Number(d.total_setting_gap) || 0), 0);
+        const totalLuar = items.reduce((total, d) => total + (Number(d.total_setting_luar) || 0), 0);
+        const totalLain = items.reduce((total, d) => total + (Number(d.total_setting_lain) || 0), 0);
+
+        const parts = [];
+        if (totalGap > 0) parts.push(`Setting di Gap : ${totalGap.toLocaleString('id-ID')}`);
+        if (totalLuar > 0) parts.push(`Setting di Luar : ${totalLuar.toLocaleString('id-ID')}`);
+        if (totalLain > 0) parts.push(`Setting : ${totalLain.toLocaleString('id-ID')}`);
+
+        if (parts.length === 0) return null;
+        return `( ${parts.join(' | ')} )`;
+    };
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -96,6 +109,11 @@ const LaporanStockGreige = () => {
 
         // Tambahkan data
         data.forEach(item => {
+            const totalStock = data.filter(d => d.greige_id === item.greige_id)
+                .reduce((total, d) => total + (d.total_panjang || 0), 0);
+            const settingText = renderSettingText(data.filter(d => d.greige_id === item.greige_id));
+            const displayStock = settingText ? `${totalStock.toLocaleString('id-ID')} ${settingText}` : totalStock.toLocaleString('id-ID');
+
             worksheet.addRow([
                 item.nama_kain,
                 item.lot_lusi,
@@ -104,8 +122,7 @@ const LaporanStockGreige = () => {
                 kondisiGreige[item.status_tsd],
                 asalGreige[item.asal_greige],
                 item.lebar_kain,
-                data.filter(d => d.greige_id === item.greige_id)
-                    .reduce((total, d) => total + d.total_panjang, 0),
+                displayStock,
                 item.grade[1] || 0,
                 item.grade[2] || 0,
                 item.grade[3] || 0,
@@ -276,10 +293,17 @@ const LaporanStockGreige = () => {
                                                 <td className='py-0'>{item.lebar_kain}</td>
                                                 {rowSpan > 0 && (
                                                     <React.Fragment>
-                                                        <td rowSpan={rowSpan} className='fw-bold py-0' style={{fontSize: "13px"}}>
-                                                            {data.filter(d => d.greige_id === item.greige_id)
-                                                                .reduce((total, d) => total + d.total_panjang, 0)
-                                                                .toLocaleString('id-ID')}
+                                                        <td rowSpan={rowSpan} className='fw-bold py-0 text-center' style={{fontSize: "13px"}}>
+                                                            <div>
+                                                                {data.filter(d => d.greige_id === item.greige_id)
+                                                                    .reduce((total, d) => total + (d.total_panjang || 0), 0)
+                                                                    .toLocaleString('id-ID')}
+                                                            </div>
+                                                            {renderSettingText(data.filter(d => d.greige_id === item.greige_id)) && (
+                                                                <div className='fw-normal text-muted' style={{fontSize: "10px", lineHeight: "1.2"}}>
+                                                                    {renderSettingText(data.filter(d => d.greige_id === item.greige_id))}
+                                                                </div>
+                                                            )}
                                                         </td>
                                                         <td rowSpan={rowSpan} className='fw-bold py-0'>{new Intl.NumberFormat('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(item.available)}</td>
                                                     </React.Fragment>
@@ -296,7 +320,16 @@ const LaporanStockGreige = () => {
                                     <tfoot>
                                         <tr>
                                             <td colSpan={7} className='fw-bold'>TOTAL</td>
-                                            <td className='fw-bold'style={{fontSize: "13px"}}>{data.reduce((total, d) => total + d.total_panjang, 0).toLocaleString('id-ID')}</td>
+                                            <td className='fw-bold text-center' style={{fontSize: "13px"}}>
+                                                <div>
+                                                    {data.reduce((total, d) => total + (d.total_panjang || 0), 0).toLocaleString('id-ID')}
+                                                </div>
+                                                {renderSettingText(data) && (
+                                                    <div className='fw-normal text-muted' style={{fontSize: "10px", lineHeight: "1.2"}}>
+                                                        {renderSettingText(data)}
+                                                    </div>
+                                                )}
+                                            </td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
