@@ -214,6 +214,7 @@ const StockGreigeDaily = () => {
   const [detailItem, setDetailItem] = useState(null);
   const [detailIncomingRolls, setDetailIncomingRolls] = useState([]);
   const [detailHourlySummary, setDetailHourlySummary] = useState([]);
+  const [detailMonthlyIncoming, setDetailMonthlyIncoming] = useState([]);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
 
   // ---------- DELETE MODAL STATE ----------
@@ -472,6 +473,7 @@ const StockGreigeDaily = () => {
     setDetailItem(null);
     setDetailIncomingRolls([]);
     setDetailHourlySummary([]);
+    setDetailMonthlyIncoming([]);
     try {
       const response = await requestApi('get', `stock-greige-daily/detail/${id}`);
       const res = response.data;
@@ -479,6 +481,7 @@ const StockGreigeDaily = () => {
         setDetailItem(res.data);
         setDetailIncomingRolls(res.incoming_rolls || []);
         setDetailHourlySummary(res.hourly_summary || []);
+        setDetailMonthlyIncoming(res.monthly_incoming || []);
       }
     } catch (error) {
       console.error('Error getting detail:', error);
@@ -2627,7 +2630,52 @@ const StockGreigeDaily = () => {
                   </div>
                 ) : (
                   <div className="p-3 bg-light rounded text-center text-muted" style={{ fontSize: '11px' }}>
-                    Tidak ada rekaman roll baru yang masuk fisik di gudang pada tanggal ini.
+                    <div className="mb-2">
+                      Tidak ada rekaman roll baru yang masuk fisik di gudang pada tanggal ini (
+                      {detailItem.formatted_date || moment(detailItem.date).format('DD MMMM YYYY')}).
+                    </div>
+                    {detailMonthlyIncoming && detailMonthlyIncoming.length > 0 && (
+                      <div className="border-top pt-2 text-start mt-2">
+                        <div className="fw-bold text-dark d-flex align-items-center gap-1 mb-2">
+                          <FaTruckFast size={14} className="text-primary" />
+                          <span>
+                            Riwayat Penerimaan Fisik di Bulan Ini ({moment(detailItem.date).format('MMMM YYYY')}):
+                          </span>
+                        </div>
+                        <Table bordered hover size="sm" className="mb-0 text-center" style={{ fontSize: '11px' }}>
+                          <thead className="table-light">
+                            <tr>
+                              <th>Tanggal Masuk</th>
+                              <th>Jumlah Masuk (m)</th>
+                              <th>Roll</th>
+                              <th>No. Dokumen / Surat Jalan</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {detailMonthlyIncoming.map((mRow, mIdx) => (
+                              <tr key={mIdx} className="table-success bg-opacity-10">
+                                <td className="fw-bold">{moment(mRow.date).format('DD MMMM YYYY')}</td>
+                                <td className="fw-bold text-success">+{formatNumber(mRow.total_panjang)} m</td>
+                                <td className="fw-bold text-success">+{formatInteger(mRow.total_roll)} Roll</td>
+                                <td>{mRow.no_document}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                          <tfoot>
+                            <tr className="fw-bold table-light">
+                              <td>TOTAL MASUK BULAN INI</td>
+                              <td className="text-success">
+                                +{formatNumber(detailMonthlyIncoming.reduce((sum, r) => sum + Number(r.total_panjang || 0), 0))} m
+                              </td>
+                              <td className="text-success">
+                                +{formatInteger(detailMonthlyIncoming.reduce((sum, r) => sum + Number(r.total_roll || 0), 0))} Roll
+                              </td>
+                              <td>-</td>
+                            </tr>
+                          </tfoot>
+                        </Table>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
