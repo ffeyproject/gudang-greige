@@ -101,6 +101,7 @@ const StockGreigeDaily = () => {
   const [filterDateMode, setFilterDateMode] = useState('single'); // 'single' | 'month' | 'range' | 'all'
   const [filterDate, setFilterDate] = useState(moment().format('YYYY-MM-DD'));
   const [filterMonth, setFilterMonth] = useState(moment().format('YYYY-MM'));
+  const [monthViewMode, setMonthViewMode] = useState('recap'); // 'recap' (1 baris per motif) | 'daily' (log harian)
   const [filterStartDate, setFilterStartDate] = useState(moment().subtract(7, 'days').format('YYYY-MM-DD'));
   const [filterEndDate, setFilterEndDate] = useState(moment().format('YYYY-MM-DD'));
   const [filterMotif, setFilterMotif] = useState('');
@@ -285,10 +286,15 @@ const StockGreigeDaily = () => {
         if (filterMonth) {
           params.start_date = moment(filterMonth, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
           params.end_date = moment(filterMonth, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+          params.date_mode = 'month';
+          if (monthViewMode === 'recap') {
+            params.group_by_motif = 1;
+          }
         }
       } else if (filterDateMode === 'range') {
         if (filterStartDate) params.start_date = filterStartDate;
         if (filterEndDate) params.end_date = filterEndDate;
+        params.date_mode = 'range';
       }
 
       if (motifValue && motifValue.trim()) {
@@ -342,7 +348,7 @@ const StockGreigeDaily = () => {
     } finally {
       setIsListLoading(false);
     }
-  }, [filterDateMode, filterDate, filterMonth, filterStartDate, filterEndDate, filterMotif, filterAsalGreige, onlyIncoming, perPage, requestApi]);
+  }, [filterDateMode, filterDate, filterMonth, monthViewMode, filterStartDate, filterEndDate, filterMotif, filterAsalGreige, onlyIncoming, perPage, requestApi]);
 
   // ---------- FETCH INCOMING SUMMARY WIDGET ----------
   const fetchIncomingSummary = useCallback(async () => {
@@ -546,10 +552,15 @@ const StockGreigeDaily = () => {
         if (filterMonth) {
           params.start_date = moment(filterMonth, 'YYYY-MM').startOf('month').format('YYYY-MM-DD');
           params.end_date = moment(filterMonth, 'YYYY-MM').endOf('month').format('YYYY-MM-DD');
+          params.date_mode = 'month';
+          if (monthViewMode === 'recap') {
+            params.group_by_motif = 1;
+          }
         }
       } else if (filterDateMode === 'range') {
         if (filterStartDate) params.start_date = filterStartDate;
         if (filterEndDate) params.end_date = filterEndDate;
+        params.date_mode = 'range';
       }
 
       if (filterMotif.trim()) {
@@ -1221,53 +1232,71 @@ const StockGreigeDaily = () => {
                         </Form.Group>
                       </Col>
                     ) : filterDateMode === 'month' ? (
-                      <Col xs={12} md={5} lg={3}>
-                        <Form.Group controlId="filterMonth">
-                          <Form.Label className="fw-semibold text-muted">Bulan Snapshot</Form.Label>
-                          <div className="d-flex gap-1">
+                      <>
+                        <Col xs={12} md={4} lg={3}>
+                          <Form.Group controlId="filterMonth">
+                            <Form.Label className="fw-semibold text-muted">Bulan Snapshot</Form.Label>
+                            <div className="d-flex gap-1">
+                              <Form.Select
+                                size="sm"
+                                value={moment(filterMonth, 'YYYY-MM').isValid() ? moment(filterMonth, 'YYYY-MM').format('MM') : '10'}
+                                onChange={(e) => {
+                                  const currentYearStr = moment(filterMonth, 'YYYY-MM').isValid()
+                                    ? moment(filterMonth, 'YYYY-MM').format('YYYY')
+                                    : moment().format('YYYY');
+                                  setFilterMonth(`${currentYearStr}-${e.target.value}`);
+                                }}
+                                className="fw-semibold"
+                              >
+                                <option value="01">Januari</option>
+                                <option value="02">Februari</option>
+                                <option value="03">Maret</option>
+                                <option value="04">April</option>
+                                <option value="05">Mei</option>
+                                <option value="06">Juni</option>
+                                <option value="07">Juli</option>
+                                <option value="08">Agustus</option>
+                                <option value="09">September</option>
+                                <option value="10">Oktober</option>
+                                <option value="11">November</option>
+                                <option value="12">Desember</option>
+                              </Form.Select>
+                              <Form.Select
+                                size="sm"
+                                style={{ width: '95px' }}
+                                value={moment(filterMonth, 'YYYY-MM').isValid() ? moment(filterMonth, 'YYYY-MM').format('YYYY') : moment().format('YYYY')}
+                                onChange={(e) => {
+                                  const currentMonthStr = moment(filterMonth, 'YYYY-MM').isValid()
+                                    ? moment(filterMonth, 'YYYY-MM').format('MM')
+                                    : moment().format('MM');
+                                  setFilterMonth(`${e.target.value}-${currentMonthStr}`);
+                                }}
+                                className="fw-semibold"
+                              >
+                                {[2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030].map((y) => (
+                                  <option key={y} value={y}>{y}</option>
+                                ))}
+                              </Form.Select>
+                            </div>
+                          </Form.Group>
+                        </Col>
+                        <Col xs={12} md={4} lg={2}>
+                          <Form.Group controlId="filterMonthViewMode">
+                            <Form.Label className="fw-semibold text-muted">Format Data</Form.Label>
                             <Form.Select
                               size="sm"
-                              value={moment(filterMonth, 'YYYY-MM').isValid() ? moment(filterMonth, 'YYYY-MM').format('MM') : '10'}
+                              value={monthViewMode}
                               onChange={(e) => {
-                                const currentYearStr = moment(filterMonth, 'YYYY-MM').isValid()
-                                  ? moment(filterMonth, 'YYYY-MM').format('YYYY')
-                                  : moment().format('YYYY');
-                                setFilterMonth(`${currentYearStr}-${e.target.value}`);
+                                setMonthViewMode(e.target.value);
                               }}
                               className="fw-semibold"
                             >
-                              <option value="01">Januari</option>
-                              <option value="02">Februari</option>
-                              <option value="03">Maret</option>
-                              <option value="04">April</option>
-                              <option value="05">Mei</option>
-                              <option value="06">Juni</option>
-                              <option value="07">Juli</option>
-                              <option value="08">Agustus</option>
-                              <option value="09">September</option>
-                              <option value="10">Oktober</option>
-                              <option value="11">November</option>
-                              <option value="12">Desember</option>
+                              <option value="recap">Rekap 1 Baris / Motif</option>
+                              <option value="daily">Rincian Log Tiap Hari</option>
                             </Form.Select>
-                            <Form.Select
-                              size="sm"
-                              style={{ width: '95px' }}
-                              value={moment(filterMonth, 'YYYY-MM').isValid() ? moment(filterMonth, 'YYYY-MM').format('YYYY') : moment().format('YYYY')}
-                              onChange={(e) => {
-                                const currentMonthStr = moment(filterMonth, 'YYYY-MM').isValid()
-                                  ? moment(filterMonth, 'YYYY-MM').format('MM')
-                                  : moment().format('MM');
-                                setFilterMonth(`${e.target.value}-${currentMonthStr}`);
-                              }}
-                              className="fw-semibold"
-                            >
-                              {[2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030].map((y) => (
-                                <option key={y} value={y}>{y}</option>
-                              ))}
-                            </Form.Select>
-                          </div>
-                        </Form.Group>
-                      </Col>
+                          </Form.Group>
+                        </Col>
+                      </>
                     ) : filterDateMode === 'range' ? (
                       <>
                         <Col xs={6} md={3} lg={2}>
@@ -1430,15 +1459,24 @@ const StockGreigeDaily = () => {
               <Card.Body className="p-3">
                 <div className="p-3 border mt-2 bg-white">
                   <h4 className="text-center py-4">
-                    REKAP LAPORAN STOK GREIGE HARIAN
+                    REKAP LAPORAN STOK GREIGE {filterDateMode === 'month' && monthViewMode === 'recap' ? 'BULANAN' : 'HARIAN'}
                     {filterDateMode === 'single' && filterDate && (
                       <div className="h6 text-muted mt-1 fw-bold">
                         PER TANGGAL: {moment(filterDate).format('DD MMMM YYYY')}
                       </div>
                     )}
                     {filterDateMode === 'month' && filterMonth && (
-                      <div className="h6 text-muted mt-1 fw-bold">
-                        PER BULAN: {moment(filterMonth, 'YYYY-MM').format('MMMM YYYY').toUpperCase()}
+                      <div className="h6 text-muted mt-1 fw-bold d-flex align-items-center justify-content-center gap-2">
+                        <span>PER BULAN: {moment(filterMonth, 'YYYY-MM').format('MMMM YYYY').toUpperCase()}</span>
+                        {monthViewMode === 'recap' ? (
+                          <Badge bg="primary" className="fw-normal" style={{ fontSize: '11px' }}>
+                            Rekap Bulanan (1 Baris / Motif)
+                          </Badge>
+                        ) : (
+                          <Badge bg="secondary" className="fw-normal" style={{ fontSize: '11px' }}>
+                            Rincian Log Harian
+                          </Badge>
+                        )}
                       </div>
                     )}
                     {filterDateMode === 'range' && filterStartDate && filterEndDate && (
@@ -1452,24 +1490,30 @@ const StockGreigeDaily = () => {
                     <tbody className="text-center">
                       <tr>
                         <th rowSpan={2} style={{ borderColor: 'black', verticalAlign: 'middle' }}>No</th>
-                        <th rowSpan={2} style={{ borderColor: 'black', verticalAlign: 'middle' }}>Tanggal</th>
+                        <th rowSpan={2} style={{ borderColor: 'black', verticalAlign: 'middle' }}>
+                          {filterDateMode === 'month' && monthViewMode === 'recap' ? 'Periode' : 'Tanggal'}
+                        </th>
                         <th rowSpan={2} style={{ borderColor: 'black', verticalAlign: 'middle' }}>Motif</th>
                         <th rowSpan={2} style={{ borderColor: 'black', verticalAlign: 'middle' }}>Asal Greige</th>
                         <th colSpan={2} style={{ borderColor: 'black' }}>
-                          <div>Stok Kemarin</div>
+                          <div>{filterDateMode === 'month' && monthViewMode === 'recap' ? 'Stok Awal Bulan' : 'Stok Kemarin'}</div>
                           <small className="text-muted d-block fw-normal" style={{ fontSize: '10px' }}>
                             {filterDateMode === 'single' && filterDate
                               ? `(s/d ${moment(filterDate).subtract(1, 'day').format('DD/MM/YYYY')})`
+                              : filterDateMode === 'month' && monthViewMode === 'recap'
+                              ? `(s/d ${moment(filterMonth, 'YYYY-MM').subtract(1, 'month').endOf('month').format('DD/MM/YYYY')})`
                               : '(H-1)'}
                           </small>
                         </th>
                         <th colSpan={2} style={{ borderColor: 'black', backgroundColor: '#e8f5e9' }}>
-                          <div className="text-success fw-bold">Stock Masuk Hari Ini</div>
+                          <div className="text-success fw-bold">
+                            {filterDateMode === 'month' && monthViewMode === 'recap' ? 'Masuk Fisik Bulan Ini' : 'Stock Masuk Hari Ini'}
+                          </div>
                           <small className="text-success d-block fw-bold" style={{ fontSize: '10px' }}>
                             {filterDateMode === 'single' && filterDate
                               ? `(Tgl ${moment(filterDate).format('DD/MM/YYYY')})`
-                              : filterDateMode === 'month' && filterMonth
-                              ? `(Bulan ${moment(filterMonth, 'YYYY-MM').format('MM/YYYY')})`
+                              : filterDateMode === 'month'
+                              ? `(${moment(filterMonth, 'YYYY-MM').format('MM/YYYY')})`
                               : (filterDateMode === 'range' && filterStartDate && filterEndDate
                                 ? `(${moment(filterStartDate).format('DD/MM')} - ${moment(filterEndDate).format('DD/MM')})`
                                 : '(Masuk Hari Ini)')}
@@ -1477,12 +1521,14 @@ const StockGreigeDaily = () => {
                         </th>
                         <th colSpan={2} style={{ borderColor: 'black' }}>Perubahan (+/-)</th>
                         <th colSpan={2} style={{ borderColor: 'black' }}>
-                          <div className="fw-bold text-dark">Jumlah Stock</div>
+                          <div className="fw-bold text-dark">
+                            {filterDateMode === 'month' && monthViewMode === 'recap' ? 'Saldo Akhir Bulan' : 'Jumlah Stock'}
+                          </div>
                           <small className="text-secondary d-block fw-semibold" style={{ fontSize: '10px' }}>
                             {filterDateMode === 'single' && filterDate
                               ? `(Per ${moment(filterDate).format('DD/MM/YYYY')})`
                               : filterDateMode === 'month' && filterMonth
-                              ? `(Bulan ${moment(filterMonth, 'YYYY-MM').format('MM/YYYY')})`
+                              ? `(Per ${moment(filterMonth, 'YYYY-MM').endOf('month').format('DD/MM/YYYY')})`
                               : '(Kumulatif)'}
                           </small>
                         </th>
@@ -1567,13 +1613,28 @@ const StockGreigeDaily = () => {
                                 {(pagination.currentPage - 1) * pagination.perPage + index + 1}
                               </td>
 
-                              {/* Tanggal & Hari */}
+                              {/* Tanggal & Hari / Periode */}
                               <td className="text-center py-0" style={{ borderColor: 'black' }}>
-                                <div>{dateDisplay}</div>
-                                {item.day_name && (
-                                  <small className="text-muted" style={{ fontSize: '10px' }}>
-                                    {item.day_name}
-                                  </small>
+                                {item.is_period_recap ? (
+                                  <div>
+                                    <span className="fw-semibold text-dark">
+                                      {moment(filterMonth, 'YYYY-MM').isValid()
+                                        ? moment(filterMonth, 'YYYY-MM').format('MMMM YYYY')
+                                        : 'Bulanan'}
+                                    </span>
+                                    <small className="text-muted d-block" style={{ fontSize: '10px' }}>
+                                      Per {moment(item.date).format('DD/MM/YYYY')}
+                                    </small>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <div>{dateDisplay}</div>
+                                    {item.day_name && (
+                                      <small className="text-muted" style={{ fontSize: '10px' }}>
+                                        {item.day_name}
+                                      </small>
+                                    )}
+                                  </>
                                 )}
                               </td>
 
