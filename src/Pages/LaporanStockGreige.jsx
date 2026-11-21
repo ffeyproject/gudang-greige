@@ -104,7 +104,7 @@ const LaporanStockGreige = () => {
         worksheet.addRow([
             'Motif', 'Lot Lusi', 'Lot Pakan', 'Keterangan', 
             'Kondisi Greige', 'Asal Greige', 'Lebar Kain', 
-            'Jumlah Stock', 'A', 'B', 'C', 'D', 'X', 'Total'
+            'Jumlah Stock', 'Available', 'A', 'B', 'C', 'D', 'X', 'Total'
         ]);
 
         // Tambahkan data
@@ -123,6 +123,7 @@ const LaporanStockGreige = () => {
                 asalGreige[item.asal_greige],
                 item.lebar_kain,
                 displayStock,
+                item.available !== undefined && item.available !== null ? Number(item.available) : 0,
                 item.grade[1] || 0,
                 item.grade[2] || 0,
                 item.grade[3] || 0,
